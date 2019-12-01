@@ -32,6 +32,15 @@ struct meanFilter_s
 	uint8_t count;
 };
 
+struct DCfilter_s
+{
+	float processed_IR;
+	float processed_Red;
+	float Red_W;
+	float IR_W;
+
+};
+
 typedef struct MAX30100_S{
 	uint16_t rawIR;
 	uint16_t rawRed;
@@ -41,13 +50,12 @@ typedef struct MAX30100_S{
 
 }MAX30100_t;
 
-float MAX30100_DCRemoval(float x)
+float MAX30100_DCRemoval(float sample, float Previous_w)
 {
-	static float Previous_w = 0;
 	float w;
 	float filtered;
 	float alpha = 0.95;
-	w = x + (alpha * Previous_w);
+	w = sample + (alpha * Previous_w);
 	filtered = w - Previous_w;
 	Previous_w = w;
 	return(filtered);
@@ -71,7 +79,18 @@ float MAX30100_meanDiff_Filter(float M, MAX30100_t* sensor)
 
 	  avg =  sensor->meanFilter.sum / sensor->meanFilter.count;
 	  return avg - M;
-}
+};
+
+float MAX30100_BWLPFilter(float x)
+{
+	static float values[2] = {0};
+	values[0] = values[1];//la muestra n-1 pasa a ser la n
+
+	values[1] = (0.2452372752527856026 * x) + (0.50952544949442879485 * values[0]);// calculo el valor de la muestra n
+
+	return (values[0] + values[1]);//regreso la suma de las muestras
+};
+
 
 int main(void)
 {
