@@ -103,6 +103,20 @@ static void MAX30100_readFifoData()//guarda los datos leidos del sensor en sus r
     rawRedValue = (buffer[2] << 8) | buffer[3];
 }
 
+
+void MAX30100_init(void)
+{
+	I2C_init(I2C_0, CLK, BR);;//i2c init
+
+    MAX30100_setMode(DEFAULT_MODE);
+    MAX30100_setLedsPulseWidth(DEFAULT_PULSE_WIDTH);
+    MAX30100_setSamplingRate(DEFAULT_SAMPLING_RATE);
+    MAX30100_setLedsCurrent(DEFAULT_IR_LED_CURRENT, DEFAULT_RED_LED_CURRENT);
+    MAX30100_setHighresModeEnabled(TRUE);//enable everithing in high resolution.
+};
+
+
+
 void MAX30100_setMode(Mode mode)//configura el modo
 {
     writeRegister(MAX30100_REG_MODE_CONFIGURATION, mode);
@@ -135,9 +149,11 @@ void MAX30100_setHighresModeEnabled(BooleanType enabled)//prende o apaga el modo
     }
 }
 
-void MAX30100_update()//actualiza los valores raw de IR y Red
+void MAX30100_update(uint16_t*red, uint16_t* ir )//actualiza los valores raw de IR y Red
 {
     MAX30100_readFifoData();
+    red = rawRedValue;
+    ir = rawIRValue;
 }
 
 void MAX30100_startTemperatureSampling()//abilita la medición de la temperatura
@@ -148,7 +164,7 @@ void MAX30100_startTemperatureSampling()//abilita la medición de la temperatura
     writeRegister(MAX30100_REG_MODE_CONFIGURATION, modeConfig);
 }
 
-void MAX30100_isTemperatureReady()//regresa 1 cuando está lista la temperatura
+BooleanType MAX30100_isTemperatureReady()//regresa 1 cuando está lista la temperatura
 {
     return !(readRegister(MAX30100_REG_MODE_CONFIGURATION) & MAX30100_MC_TEMP_EN);
 }
@@ -160,6 +176,8 @@ float MAX30100_retrieveTemperature()//recuperamos el valor de la temperatura
 
     return tempFrac * 0.0625 + tempInteger;
 }
+
+
 
 
 
