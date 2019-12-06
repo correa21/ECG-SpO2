@@ -27,7 +27,7 @@ void beat (void)
 {
 
 	printf("BEAT!\N SpO2: %d\n", MAX30100_pulseOximeter_getSpO2());
-	printf("HR: %d\n", (uint8_t)MAX30100_pulseOximeter_getHeartRate());
+	printf("HR: %d\n", (uint32_t)MAX30100_pulseOximeter_getHeartRate());
 };
 
 int main(void)

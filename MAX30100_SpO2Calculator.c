@@ -56,8 +56,7 @@ void SpO2Calculator_update(float irACValue, float redACValue, BooleanType beatDe
 	    {
 	    	SpO2.beatsDetectedNum++;
 	        if (SpO2.beatsDetectedNum == CALCULATE_EVERY_N_BEATS) {
-	        	//float resultado_loco = log((SpO2.redACValueSqSum  / SpO2.samplesRecorded)) / log((SpO2.irACValueSqSum / SpO2.samplesRecorded));
-	            float acSqRatio = 100.0 * log((SpO2.redACValueSqSum  / SpO2.samplesRecorded)) / log((SpO2.irACValueSqSum / SpO2.samplesRecorded));
+	        	float acSqRatio = 100.0 * log((SpO2.redACValueSqSum  / SpO2.samplesRecorded)) / log((SpO2.irACValueSqSum / SpO2.samplesRecorded));
 	            uint8_t index = 0;
 
 	            if (acSqRatio > 66) {

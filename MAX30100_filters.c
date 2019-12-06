@@ -14,7 +14,7 @@ float MAX30100_DCRemoval(float sample, float Previous_w)
 {
 	float w;
 	float filtered;
-	float alpha = (0.90F);
+	float alpha = (0.95F);
 	w = sample + alpha * Previous_w;
 	filtered = w - Previous_w;
 	last_w = w;
