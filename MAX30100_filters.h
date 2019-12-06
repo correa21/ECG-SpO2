@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 
-#define MEAN_FILTER_SIZE	(100U)
+#define MEAN_FILTER_SIZE	(15U)
 
 
 

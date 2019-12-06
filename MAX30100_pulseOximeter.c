@@ -25,7 +25,7 @@ static void checkSample()
         float semiFilteredPulse = MAX30100_meanDiff_Filter(irACValue, &(pox_g.filter));
 
 
-        float filteredPulseValue = MAX30100_BWLPFilter(-semiFilteredPulse);
+        float filteredPulseValue = MAX30100_BWLPFilter(semiFilteredPulse);
         BooleanType beatDetected = MAX30100_beatDet_addSample(filteredPulseValue);
 
         if (MAX30100_beatDet_getRate() > 0) {
@@ -45,6 +45,7 @@ static void checkSample()
 
 static void checkCurrentBias()
 {
+	float decrementarRED = (pox_g.filter.Red_W - pox_g.filter.IR_W);
     // Follower that adjusts the red led current in order to have comparable DC baselines between
     // red and IR leds. The numbers are really magic: the less possible to avoid oscillations
     if (millis() - pox_g.tsLastBiasCheck > CURRENT_ADJUSTMENT_PERIOD_MS) {
@@ -86,7 +87,7 @@ static void checkTemperature()
 void MAX30100_pulseOximeter_begin(void)
 {
 
-
+	time_start();
     MAX30100_init();
     MAX30100_setMode(MAX30100_MODE_SPO2_HR);
     MAX30100_setLedsCurrent(IR_LED_CURRENT, RED_LED_CURRENT_START);
@@ -102,7 +103,7 @@ void MAX30100_pulseOximeter_begin(void)
     pox_g.state = PULSEOXIMETER_STATE_IDLE;
 
 
-    // Start temperature sampling and wait for its completion (blocking)
+   // Start temperature sampling and wait for its completion (blocking)
     MAX30100_startTemperatureSampling();
     while (!MAX30100_isTemperatureReady());
     pox_g.sensor.temp = MAX30100_retrieveTemperature();
@@ -125,12 +126,12 @@ uint8_t MAX30100_pulseOximeter_getSpO2(void)
     return (SpO2Calculator_getSpO2());
 };
 
-uint8_t  MAX30100_pulseOximeter_getRedLedCurrentBias()
+uint8_t  MAX30100_pulseOximeter_getRedLedCurrentBias(void)
 {
     return pox_g.redLedPower;
 };
 
-float  MAX30100_pulseOximeter_getTemperature()
+float  MAX30100_pulseOximeter_getTemperature(void)
 {
     return pox_g.temperature;
 };

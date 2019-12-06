@@ -20,7 +20,7 @@
 #define MUL  1
 
 #define CLK (10500000U)
-#define BR  (1600000U)
+#define BR  (400000U)
 
 /** Constant that represent the clock enable for GPIO A */
 #define I2C0_CLOCK_GATING 0x40

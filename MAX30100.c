@@ -7,7 +7,7 @@
 
 
 #include "MAX30100.h"
-
+#include "stdio.h"
 uint16_t rawIRValue;
 uint16_t rawRedValue;
 
@@ -15,18 +15,18 @@ static void MAX30100_wRegister(uint8_t adress, uint8_t data)
 {
 	I2C_start();
 
-		I2C_write_byte(MAX30100_WRITE);
-		I2C_wait();
-		I2C_get_ack();
+	I2C_write_byte(MAX30100_WRITE);
+	I2C_wait();
+	I2C_get_ack();
 
-		I2C_write_byte(adress);
-		I2C_wait();
-		I2C_get_ack();
+	I2C_write_byte(adress);
+	I2C_wait();
+	I2C_get_ack();
 
-		I2C_write_byte(data);
-		I2C_wait();
-		I2C_get_ack();
-		I2C_stop();
+	I2C_write_byte(data);
+	I2C_wait();
+	I2C_get_ack();
+	I2C_stop();
 };
 
 uint8_t MAX30100_rRegister(uint8_t adress)
@@ -53,15 +53,18 @@ uint8_t MAX30100_rRegister(uint8_t adress)
 	I2C_nack();
 	I2C_wait();
 
+
 	I2C_stop();
 
+	data = I2C_read_byte();
 	I2C_tx_rx_mode(TRNSMITTER);
 	return (data);
 }
 
 static void burstRead(uint8_t baseAddress, uint8_t *buffer, uint8_t length)//lectura de una muestra, cada muestra tiene 4 datos de 8 bits, los primeros dos datos leidos son información del infrarojo y los otros dos son del rojo
-{
-	uint8_t buffer_index;
+{uint8_t buffer_index;
+	//for(buffer_index = 0 ; buffer_index < length ; buffer_index++)
+	{
 	I2C_start();
 
 	I2C_write_byte(MAX30100_WRITE);
@@ -80,16 +83,32 @@ static void burstRead(uint8_t baseAddress, uint8_t *buffer, uint8_t length)//lec
 
 	I2C_tx_rx_mode(RECEIVER);
 
-	for(buffer_index = 0 ; buffer_index < length ; buffer_index++)
+	for(buffer_index = 0 ; buffer_index < length-1 ; buffer_index++)/*Reading just 3 elements, the last one must bee read outside the loop*/
 	{
+
+		/*Dummy read for first 3 elements*/
 		buffer[buffer_index] = I2C_read_byte();
-		I2C_nack();
+		I2C_ack();
 		I2C_wait();
+		buffer[buffer_index] = I2C_read_byte();
+
+		//I2C_wait();
 
 	}
+	/*Dummy read for first last element elements*/
+	buffer[buffer_index] = I2C_read_byte();
+	I2C_nack();
+	I2C_wait();
 	I2C_stop();
+	buffer[buffer_index] = I2C_read_byte();
 
-	I2C_tx_rx_mode(TRNSMITTER);
+		//I2C_nack();
+		//I2C_stop();
+
+	//buffer[buffer_index] = I2C_read_byte();
+
+	I2C_tx_rx_mode(TRNSMITTER);}
+
 };
 
 static void MAX30100_readFifoData()//guarda los datos leidos del sensor en sus respectivs variables de 16bits
@@ -119,13 +138,13 @@ void MAX30100_init(void)
 
 void MAX30100_setMode(Mode mode)//configura el modo
 {
-    writeRegister(MAX30100_REG_MODE_CONFIGURATION, mode);
+	MAX30100_wRegister(MAX30100_REG_MODE_CONFIGURATION, mode);
 }
 
 void MAX30100_setLedsPulseWidth(LEDPulseWidth ledPulseWidth)//configura el pulso de los leds
 {
-    uint8_t previous = readRegister(MAX30100_REG_SPO2_CONFIGURATION);
-    writeRegister(MAX30100_REG_SPO2_CONFIGURATION, (previous & 0xfc) | ledPulseWidth);
+    uint8_t previous = MAX30100_rRegister(MAX30100_REG_SPO2_CONFIGURATION);
+    MAX30100_wRegister(MAX30100_REG_SPO2_CONFIGURATION, (previous & 0xfc) | ledPulseWidth);
 }
 
 void MAX30100_setLedsCurrent(LEDCurrent irLedCurrent, LEDCurrent redLedCurrent)//configura la corriente de los leds
@@ -135,44 +154,44 @@ void MAX30100_setLedsCurrent(LEDCurrent irLedCurrent, LEDCurrent redLedCurrent)/
 
 void MAX30100_setSamplingRate(SamplingRate samplingRate)//configura la frecuencia de muestreo
 {
-    uint8_t previous = readRegister(MAX30100_REG_SPO2_CONFIGURATION);
-    writeRegister(MAX30100_REG_SPO2_CONFIGURATION, (previous & 0xe3) | (samplingRate << 2));
+    uint8_t previous = MAX30100_rRegister(MAX30100_REG_SPO2_CONFIGURATION);
+    MAX30100_wRegister(MAX30100_REG_SPO2_CONFIGURATION, (previous & 0xe3) | (samplingRate << 2));
 }
 
 void MAX30100_setHighresModeEnabled(BooleanType enabled)//prende o apaga el modo HD
 {
-    uint8_t previous = readRegister(MAX30100_REG_SPO2_CONFIGURATION);
+    uint8_t previous = MAX30100_rRegister(MAX30100_REG_SPO2_CONFIGURATION);
     if (enabled) {
-        writeRegister(MAX30100_REG_SPO2_CONFIGURATION, previous | MAX30100_SPC_SPO2_HI_RES_EN);
+    	MAX30100_wRegister(MAX30100_REG_SPO2_CONFIGURATION, previous | MAX30100_SPC_SPO2_HI_RES_EN);
     } else {
-        writeRegister(MAX30100_REG_SPO2_CONFIGURATION, previous & ~MAX30100_SPC_SPO2_HI_RES_EN);
+    	MAX30100_wRegister(MAX30100_REG_SPO2_CONFIGURATION, previous & ~MAX30100_SPC_SPO2_HI_RES_EN);
     }
 }
 
 void MAX30100_update(uint16_t*red, uint16_t* ir )//actualiza los valores raw de IR y Red
 {
     MAX30100_readFifoData();
-    red = rawRedValue;
-    ir = rawIRValue;
+    *red = rawRedValue;
+    *ir = rawIRValue;
 }
 
 void MAX30100_startTemperatureSampling()//abilita la medición de la temperatura
 {
-    uint8_t modeConfig = readRegister(MAX30100_REG_MODE_CONFIGURATION);
+    uint8_t modeConfig = MAX30100_rRegister(MAX30100_REG_MODE_CONFIGURATION);
     modeConfig |= MAX30100_MC_TEMP_EN;
 
-    writeRegister(MAX30100_REG_MODE_CONFIGURATION, modeConfig);
+    MAX30100_wRegister(MAX30100_REG_MODE_CONFIGURATION, modeConfig);
 }
 
 BooleanType MAX30100_isTemperatureReady()//regresa 1 cuando está lista la temperatura
 {
-    return !(readRegister(MAX30100_REG_MODE_CONFIGURATION) & MAX30100_MC_TEMP_EN);
+    return !(MAX30100_rRegister(MAX30100_REG_MODE_CONFIGURATION) & MAX30100_MC_TEMP_EN);
 }
 
 float MAX30100_retrieveTemperature()//recuperamos el valor de la temperatura
 {
-    int8_t tempInteger = readRegister(MAX30100_REG_TEMPERATURE_DATA_INT);
-    float tempFrac = readRegister(MAX30100_REG_TEMPERATURE_DATA_FRAC);
+    int8_t tempInteger = MAX30100_rRegister(MAX30100_REG_TEMPERATURE_DATA_INT);
+    float tempFrac = MAX30100_rRegister(MAX30100_REG_TEMPERATURE_DATA_FRAC);
 
     return tempFrac * 0.0625 + tempInteger;
 }

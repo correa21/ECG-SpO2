@@ -132,7 +132,7 @@ float MAX30100_beatDet_getRate (void)
 {
     if (hrm_g.beatPeriod != 0)
     {
-        return (1 / (hrm_g.beatPeriod * 1000 * 60));
+        return ((1 / hrm_g.beatPeriod) * 1000 * 60);
     }
     else
     {

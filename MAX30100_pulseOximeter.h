@@ -12,7 +12,7 @@
 #define SAMPLING_FREQUENCY                  100
 #define CURRENT_ADJUSTMENT_PERIOD_MS        500
 #define IR_LED_CURRENT                      MAX30100_LED_CURR_50MA
-#define RED_LED_CURRENT_START               MAX30100_LED_CURR_27_1MA
+#define RED_LED_CURRENT_START               MAX30100_LED_CURR_11MA
 #define DC_REMOVER_ALPHA                    0.95
 #define TEMPERATURE_SAMPLING_PERIOD_MS      2000
 
@@ -47,5 +47,18 @@ typedef struct PulseOximeter_s
 	void (*onBeatDetected)();	/*Callback function to do when beat is detected*/
 }PulseOximeter_t;
 
+void MAX30100_pulseOximeter_begin(void);
+
+void MAX30100_pulseOximeter_update(void);
+
+uint8_t MAX30100_pulseOximeter_getSpO2(void);
+
+uint8_t  MAX30100_pulseOximeter_getRedLedCurrentBias(void);
+
+float  MAX30100_pulseOximeter_getTemperature(void);
+
+float MAX30100_pulseOximeter_getHeartRate(void);
+
+void MAX30100_pulseOximeter_setOnBeatDetectedCallback(void (*cb)());
 
 #endif /* MAX30100_PULSEOXIMETER_H_ */

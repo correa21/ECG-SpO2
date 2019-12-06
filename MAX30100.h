@@ -11,6 +11,7 @@
 #include "stdint.h"
 #include "I2C.h"
 #include "Bits.h"
+#include "Delay.h"
 #include "MAX30100_Registers.h"
 
 #define DEFAULT_MODE                MAX30100_MODE_HRONLY
