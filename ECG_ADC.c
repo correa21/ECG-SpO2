@@ -9,9 +9,12 @@
  */
 
 
-#include <ECG_ADC.h>
+#include "ECG_ADC.h"
+#include "DAC.h"
+
 
 uint16_t sample_ECG_buffer[320] = {0};
+
 sampling_status_t g_sampling_state = SAMPLING;
 uint8_t samples_ready = FALSE;
 
@@ -40,13 +43,20 @@ void ECG_ADC_Init(void)
 	NVIC_global_enable_interrupts;
 	g_ON = TRUE;
 
+	/** DAC Configuration */
+	DAC_clock_gating(DAC_0);
+	DAC_init(DAC_0);
+	DAC_set_buff_pointer(DAC_0, 0U);
+
 }
 
-void ECG_ADC_Start_Sample()
+void ECG_ADC_Start_Sample(void)
 {
 	samples_ready = FALSE;
 	g_sampling_state = SAMPLING;
+	PIT_enable_interrupt(PIT_2);
 	PIT_enable_timer(PIT_2);
+
 }
 
 void ECG_ADC_PIT_Callback(void)
@@ -62,6 +72,7 @@ void ECG_ADC_get_values(ADC_channel_t adc_channel)
 	{
 		case SAMPLING:
 			sample_ECG_buffer[samples] = ADC_getMeasure(adc_channel);
+			DAC_set_value(DAC_0, DAC_LOW_INDEX, sample_ECG_buffer[samples]);
 			samples++;
 
 			if(MAX_SAMPLES == samples)					/** Wait to take 10 ADC samples */
@@ -90,7 +101,6 @@ uint8_t ECG_ADC_check_status(void)
 
 uint16_t * ECG_ADC_return_samples(void)
 {
-
 	return(&sample_ECG_buffer);
 }
 

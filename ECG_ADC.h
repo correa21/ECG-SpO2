@@ -8,8 +8,8 @@
 	\todo
  */
 
-#ifndef RGB_ADC_H_
-#define RGB_ADC_H_
+#ifndef ECG_ADC_H_
+#define ECG_ADC_H_
 
 #include "ADC.h"
 #include "GPIO.h"
@@ -20,7 +20,7 @@
 #include "NVIC.h"
 
 
-#define PIT_SAMPLE (0.0125F)
+#define PIT_SAMPLE (0.001F)
 #define CLOCK_RATE (21000000U)
 
 #define MAX_SAMPLES (320U)
@@ -88,6 +88,8 @@ void ECG_ADC_PIT_Callback(void);
  	 \todo Implement a mechanism to clear interrupts by a specific pin.
  */
 void ECG_ADC_DeInit(void);
+
+void ECG_ADC_Start_Sample(void);
 
 uint8_t ECG_ADC_check_status(void);
 

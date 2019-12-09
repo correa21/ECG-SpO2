@@ -5,7 +5,7 @@
  *      Author: armando
  */
 
-#include <times.h>
+#include "times.h"
 
 
 uint32_t milis_g = 0; /* Time elapsed since the program start in ms, it can count till 49 hrs  */
