@@ -121,7 +121,7 @@ float MAX30100_pulseOximeter_getHeartRate(void)
     return (MAX30100_beatDet_getRate());
 };
 
-uint8_t MAX30100_pulseOximeter_getSpO2(void)
+float MAX30100_pulseOximeter_getSpO2(void)
 {
     return (SpO2Calculator_getSpO2());
 };

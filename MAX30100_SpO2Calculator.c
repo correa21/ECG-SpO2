@@ -54,7 +54,7 @@ void SpO2Calculator_reset(void)
 };
 
 
-uint8_t SpO2Calculator_getSpO2(void)
+float SpO2Calculator_getSpO2(void)
 {
     return SpO2.spO2;
 }
