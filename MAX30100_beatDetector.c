@@ -103,7 +103,7 @@ static BooleanType CheckForbeat (float sample)
 				float delta = millis() - hrm_g.tsLastBeat;
 				if (delta)
 				{
-					hrm_g.beatPeriod = (BEATDETECTOR_BPFILTER_ALPHA * delta) + ((1 - BEATDETECTOR_BPFILTER_ALPHA) * hrm_g.beatPeriod);
+					hrm_g.beatPeriod = BEATDETECTOR_BPFILTER_ALPHA * delta + (1 - BEATDETECTOR_BPFILTER_ALPHA) * hrm_g.beatPeriod;
 				}
 
 				hrm_g.tsLastBeat = millis();

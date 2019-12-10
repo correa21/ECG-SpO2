@@ -18,33 +18,6 @@ static const uint8_t spO2LUT[43] = {100,100,100,100,99,99,99,99,99,99,98,98,98,9
 
 #define N 10
 
-float ln(float x){
-    int i;
-    float result;
-    float xt;
-    float xtpow;
-    int sign;
-    if(x > 0 && x < 1){
-        xt = x - 1.0;
-        sign = -1;
-        xtpow = 1.0;
-        result = 0;
-        for(i = 1 ; i < N + 1; i++ );
-        {
-            // Problem here
-            printf("%d\n", i);
-            sign = sign * (-1);
-            xtpow *= xt;
-            result += xtpow * sign / i;
-        }
-    }else if(x >= 1)
-    {
-        return -1 * ln(1.0 / x);
-    }
-    return result;
-}
-
-
 
 void SpO2Calculator_update(float irACValue, float redACValue, BooleanType beatDetected)
 {
@@ -59,14 +32,14 @@ void SpO2Calculator_update(float irACValue, float redACValue, BooleanType beatDe
 	        	float acSqRatio = 100.0 * log((SpO2.redACValueSqSum  / SpO2.samplesRecorded)) / log((SpO2.irACValueSqSum / SpO2.samplesRecorded));
 	            uint8_t index = 0;
 
-	            if (acSqRatio > 66) {
-	                index = (uint8_t)acSqRatio - 66;
+	            if (acSqRatio > 70) {
+	                index = (uint8_t)acSqRatio - 60;
 	            } else if (acSqRatio > 50) {
 	                index = (uint8_t)acSqRatio - 50;
 	            }
 	            SpO2Calculator_reset();
 
-	            SpO2.spO2 = spO2LUT[index];
+	            SpO2.spO2 = acSqRatio; //spO2LUT[index];
 	        }
 	    }
 };
