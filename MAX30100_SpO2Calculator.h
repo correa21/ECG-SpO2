@@ -23,8 +23,38 @@ typedef struct SpO2Calculator_s
 	uint8_t spO2;
 }SpO2Calculator_t;
 
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 This function receive the ac values from the red led reading and IR led reading.
+ 	 	 	 it calculate the SpO2 is beatDetected is TRUE
+
+ 	 \param[in] float irACValue, float redACValue, BooleanType beatDetected
+ 	 \return void
+ */
 void SpO2Calculator_update(float irACValue, float redACValue, BooleanType beatDetected);
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 Reset the values from a internal SpO2Calculator_t variable.
+
+ 	 \param[in] void
+ 	 \return void
+ */
 void SpO2Calculator_reset(void);
+
+/********************************************************************************************/
+/********************************************************************************************/
+/********************************************************************************************/
+/*!
+ 	 \brief	 Return the SpO2 value.
+
+ 	 \param[in] void
+ 	 \return uint8_t
+ */
 uint8_t SpO2Calculator_getSpO2(void);
 
 

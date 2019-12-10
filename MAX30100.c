@@ -175,7 +175,7 @@ void MAX30100_update(uint16_t*red, uint16_t* ir )//actualiza los valores raw de 
     *ir = rawIRValue;
 }
 
-void MAX30100_startTemperatureSampling()//abilita la medición de la temperatura
+void MAX30100_startTemperatureSampling(void)//abilita la medición de la temperatura
 {
     uint8_t modeConfig = MAX30100_rRegister(MAX30100_REG_MODE_CONFIGURATION);
     modeConfig |= MAX30100_MC_TEMP_EN;
@@ -183,12 +183,12 @@ void MAX30100_startTemperatureSampling()//abilita la medición de la temperatura
     MAX30100_wRegister(MAX30100_REG_MODE_CONFIGURATION, modeConfig);
 }
 
-BooleanType MAX30100_isTemperatureReady()//regresa 1 cuando está lista la temperatura
+BooleanType MAX30100_isTemperatureReady(void)//regresa 1 cuando está lista la temperatura
 {
     return !(MAX30100_rRegister(MAX30100_REG_MODE_CONFIGURATION) & MAX30100_MC_TEMP_EN);
 }
 
-float MAX30100_retrieveTemperature()//recuperamos el valor de la temperatura
+float MAX30100_retrieveTemperature(void)//recuperamos el valor de la temperatura
 {
     int8_t tempInteger = MAX30100_rRegister(MAX30100_REG_TEMPERATURE_DATA_INT);
     float tempFrac = MAX30100_rRegister(MAX30100_REG_TEMPERATURE_DATA_FRAC);
