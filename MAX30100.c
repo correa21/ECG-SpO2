@@ -71,7 +71,7 @@ static void burstRead(uint8_t baseAddress, uint8_t *buffer, uint8_t length)//lec
 	I2C_wait();
 	I2C_get_ack();
 
-	I2C_write_byte(baseAddress);//FIFO RD ptr
+	I2C_write_byte(baseAddress);//FIFO data ptr
 	I2C_wait();
 	I2C_get_ack();
 

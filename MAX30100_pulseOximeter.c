@@ -12,7 +12,8 @@ PulseOximeter_t pox_g;
 
 static void checkSample()
 {
-    if ((millis() - pox_g.tsLastSample) > (1.0 / SAMPLING_FREQUENCY * 1000.0)) {
+    if ((millis() - pox_g.tsLastSample) > (1.0 / SAMPLING_FREQUENCY * 1000.0))
+    {
     	pox_g.tsLastSample = millis();
     	MAX30100_update(&(pox_g.sensor.rawRed),&(pox_g.sensor.rawIR));//guardo los valores crudos del sensor
         float irACValue = MAX30100_DCRemoval(pox_g.sensor.rawIR,pox_g.filter.IR_W);//elimino componente de directa del IR
@@ -26,7 +27,7 @@ static void checkSample()
 
 
         float filteredPulseValue = MAX30100_BWLPFilter(semiFilteredPulse);
-        BooleanType beatDetected = MAX30100_beatDet_addSample(filteredPulseValue);
+        BooleanType beatDetected = MAX30100_beatDet_addSample(-filteredPulseValue);
 
         if (MAX30100_beatDet_getRate() > 0) {
         	pox_g.state = PULSEOXIMETER_STATE_DETECTING;
@@ -63,7 +64,7 @@ static void checkCurrentBias()
 
         if (changed) {
             MAX30100_setLedsCurrent(IR_LED_CURRENT, (LEDCurrent)pox_g.redLedPower);
-            pox_g.tsLastCurrentAdjustment = millis();
+
         }
 
         pox_g.tsLastBiasCheck = millis();
