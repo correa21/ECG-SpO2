@@ -15,7 +15,7 @@
 
 /**This is mail box to received the information from the serial port*/
 
-#define BEAT_LED_PIN 			bit_1
+#define BEAT_LED_PIN 		 	bit_1
 #define BEAT_LED_PORT 			GPIO_A
 
 #define	REPORTING_PERIOD_MS		5000
